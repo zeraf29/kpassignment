@@ -1,4 +1,4 @@
-package com.kakao.pay.assignment;
+package com.kakao.pay.ecotourism;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AssignmentApplicationTests {
+public class EcoTourismApplicationTests {
 
 	@Test
 	public void contextLoads() {

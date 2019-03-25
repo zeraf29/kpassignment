@@ -72,7 +72,7 @@ public class EcoTourismApiController {
 			obj2.put("theme",ecoTourism.getTheme());
 			arr.add(obj2);
 		}
-		obj2.put("region", regionCode);
+		obj.put("region", regionCode);
 		obj.put("programs", arr);
 		return obj;
 	}

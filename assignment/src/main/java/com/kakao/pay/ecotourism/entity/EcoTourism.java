@@ -1,6 +1,7 @@
 package com.kakao.pay.ecotourism.entity;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,10 +21,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EcoTourism {
 	
-	@Id
-	@Column(length=100)
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long idx;
+	@EmbeddedId
+	private EcoTourismId ecoTourismId;
+
 	@Column(length=150,nullable = false)
 	private String prgm_name;
 	@Column(length=150,nullable = false)
@@ -33,6 +33,8 @@ public class EcoTourism {
 	@Column(length=255)
 	private String introduce;
 	@Column(length=500) //for any RDBMS
-	private String specfic;
+	private String detail;
+	
+	
 	
 }

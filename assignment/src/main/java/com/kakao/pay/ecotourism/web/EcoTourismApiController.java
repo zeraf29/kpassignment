@@ -4,8 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,10 @@ public class EcoTourismApiController {
 		ClassPathResource cpr = new ClassPathResource(csvFileName);
 		ArrayList<String[]> data = new ArrayList<String[]>();
 		
+		//한글 깨짐(맥북) 아닐 경우 
+		CSVReader reader = new CSVReader(new FileReader(cpr.getPath()));
 		//한글 깨짐으로 EUC-KR 설정
-		CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(cpr.getPath()), "EUC-KR"));
+		//CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(cpr.getPath()), "EUC-KR"));
 		String[] s;
         while ((s = reader.readNext()) != null) {
         	data.add(s);
@@ -47,13 +50,65 @@ public class EcoTourismApiController {
 		return result;
     }
 	
-	@RequestMapping(value = "/api/data/region/{region}/all", method = RequestMethod.GET)
-	public @ResponseBody ArrayList<String[]> getDataAllByRegion(@PathVariable("region") String region){
-		ArrayList<String[]> data = null;
+	@RequestMapping(value = "/api/search/region/{region}", method = RequestMethod.GET)
+	public @ResponseBody JSONObject getDataByRegionLike(@PathVariable("region") String region) throws Exception{
+		ArrayList<EcoTourism> ecoTourismList = ecoTourismService.findByRegionLike(region);
 		
+		JSONObject obj = new JSONObject();
+		JSONObject obj2 = new JSONObject();
+		JSONArray arr = new JSONArray();
 		
+		//지역코드 추출
+		//중복 제거 처리
+		ArrayList<String> regionCode = new ArrayList<String>();
+		for(EcoTourism ecoTourism : ecoTourismList) {
+			if(!regionCode.contains(ecoTourism.getEcoTourismId().getReg_code())) {
+				regionCode.add(ecoTourism.getEcoTourismId().getReg_code());
+			}
+			obj2.put("prgm_name",ecoTourism.getPrgm_name());
+			obj2.put("theme",ecoTourism.getTheme());
+			arr.add(obj2);
+		}
+		obj2.put("region", regionCode);
+		obj.put("programs", arr);
+		return obj;
+	}
+	
+	
+	@RequestMapping(value = "/api/search/introduce/{introduce}", method = RequestMethod.GET)
+	public @ResponseBody JSONObject getDataByIntroduceLike(@PathVariable("introduce") String introduce) throws Exception{
+		ArrayList<EcoTourism> ecoTourismList = ecoTourismService.findByIntroduceLike(introduce);
 		
-		return data;
+		JSONObject obj = new JSONObject();
+		JSONObject obj2 = new JSONObject();
+		JSONArray arr = new JSONArray();
+		
+		//지역정보 추출
+		//지역명은 중복 제거 처리(예:샘플 예제의 "세계문화유산"은 "경상북도 경주시"가 2개 이지만 1개만 지역명 표시
+		ArrayList<String> regions = new ArrayList<String>();
+		for(EcoTourism ecoTourism : ecoTourismList) {
+			if(!regions.contains(ecoTourism.getRegion())) {
+				regions.add(ecoTourism.getRegion());
+			}
+		}
+		obj2.put("region", regions);
+		obj2.put("count", ecoTourismList.size()); //검색 결과수 = 서비스 지역 개
+		arr.add(obj2);
+		obj.put("programs", arr);
+		obj.put("keyword", introduce);
+		return obj;
+	}
+	
+	@RequestMapping(value = "/api/count/detail/{detail}", method = RequestMethod.GET)
+	public @ResponseBody JSONObject getCountByDetailLike(@PathVariable("detail") String detail) throws Exception{
+		int count = ecoTourismService.findByDetailLike(detail);
+		//regex 검색 결과수
+		
+		JSONObject obj = new JSONObject();
+		
+		obj.put("keyword", detail);
+		obj.put("count", count); 
+		return obj;
 	}
 	
 }

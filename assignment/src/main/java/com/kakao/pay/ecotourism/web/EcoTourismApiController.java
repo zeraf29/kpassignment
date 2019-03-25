@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import javax.persistence.Column;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,8 +65,8 @@ public class EcoTourismApiController {
 		//중복 제거 처리
 		ArrayList<String> regionCode = new ArrayList<String>();
 		for(EcoTourism ecoTourism : ecoTourismList) {
-			if(!regionCode.contains(ecoTourism.getEcoTourismId().getReg_code())) {
-				regionCode.add(ecoTourism.getEcoTourismId().getReg_code());
+			if(!regionCode.contains(ecoTourism.getCode())) {
+				regionCode.add(ecoTourism.getCode());
 			}
 			obj2.put("prgm_name",ecoTourism.getPrgm_name());
 			obj2.put("theme",ecoTourism.getTheme());
@@ -109,6 +112,75 @@ public class EcoTourismApiController {
 		obj.put("keyword", detail);
 		obj.put("count", count); 
 		return obj;
+	}
+	
+	
+	@RequestMapping(value = "/api/search/regcode/{reg_code}", method = RequestMethod.GET)
+	public @ResponseBody JSONObject getDataByregCode(@PathVariable("reg_code") String reg_code) throws Exception{
+		ArrayList<EcoTourism> ecoTourismList = ecoTourismService.findByRegCode(reg_code);
+		
+		JSONObject obj = new JSONObject();
+		JSONObject obj2 = new JSONObject();
+		JSONArray arr = new JSONArray();
+		
+		obj.put("keyword", reg_code);
+		for(EcoTourism ecoTourism : ecoTourismList) {
+			obj2.put("idx",ecoTourism.getIdx());
+			obj2.put("reg_code",ecoTourism.getCode());
+			obj2.put("prgm_name",ecoTourism.getPrgm_name());
+			obj2.put("theme",ecoTourism.getTheme());
+			obj2.put("region",ecoTourism.getRegion());
+			obj2.put("introduce",ecoTourism.getIntroduce());
+			obj2.put("detail",ecoTourism.getDetail());
+			arr.add(obj2);
+		}
+		obj.put("programs", arr);
+		
+		return obj;
+	}
+	
+	@RequestMapping(value = "/api/insert/record", method = RequestMethod.POST)
+	public @ResponseBody EcoTourism insertEcoTourism(
+			@RequestParam(value = "prgm_name", required=true) String prgm_name
+			,@RequestParam(value = "code", required=true) String code
+			,@RequestParam(value = "theme", required=false) String theme
+			,@RequestParam(value = "region", required=true) String region
+			,@RequestParam(value = "introduce", required=false) String introduce
+			,@RequestParam(value = "detail", required=false) String detail
+			) throws Exception{
+		
+		EcoTourism ecoTourism = new EcoTourism();
+		ecoTourism.setPrgm_name(prgm_name);
+		ecoTourism.setCode(code);
+		ecoTourism.setTheme(theme);
+		ecoTourism.setRegion(region);
+		ecoTourism.setIntroduce(introduce);
+		ecoTourism.setDetail(detail);
+		
+		return ecoTourismService.saveEcoTourism(ecoTourism);
+	}
+	
+	@RequestMapping(value = "/api/update/record", method = RequestMethod.POST)
+	public @ResponseBody EcoTourism updateEcoTourism(
+			@RequestParam(value = "idx", required=true) Long idx
+			,@RequestParam(value = "prgm_name", required=true) String prgm_name
+			,@RequestParam(value = "code", required=true) String code
+			,@RequestParam(value = "theme", required=true) String theme
+			,@RequestParam(value = "region", required=true) String region
+			,@RequestParam(value = "introduce", required=true) String introduce
+			,@RequestParam(value = "detail", required=true) String detail
+			) throws Exception{
+		
+		EcoTourism ecoTourism = new EcoTourism();
+		ecoTourism.setIdx(idx);
+		ecoTourism.setPrgm_name(prgm_name);
+		ecoTourism.setCode(code);
+		ecoTourism.setTheme(theme);
+		ecoTourism.setRegion(region);
+		ecoTourism.setIntroduce(introduce);
+		ecoTourism.setDetail(detail);
+		
+		return ecoTourismService.saveEcoTourism(ecoTourism);
 	}
 	
 }

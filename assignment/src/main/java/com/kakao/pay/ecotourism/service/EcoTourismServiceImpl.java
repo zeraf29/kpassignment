@@ -49,12 +49,9 @@ public class EcoTourismServiceImpl implements EcoTourismService {
 				continue;
 			}
 			ecoTourism = new EcoTourism();
-			ecoTourismId = new EcoTourismId();
 			
-			ecoTourismId.setIdx(Long.parseLong(temp[0]));
-			ecoTourismId.setReg_code(temp[3]);
-			
-			ecoTourism.setEcoTourismId(ecoTourismId);
+			ecoTourism.setIdx(Long.parseLong(temp[0]));
+			ecoTourism.setCode(temp[3]);
 			ecoTourism.setPrgm_name(temp[1]);
 			ecoTourism.setTheme(temp[2]);
 			ecoTourism.setRegion(temp[4]);
@@ -85,6 +82,34 @@ public class EcoTourismServiceImpl implements EcoTourismService {
 	}
 	
 	
-
+	@Override
+	public ArrayList<EcoTourism> findByRegCode(String reg_code) throws Exception {
+		// TODO Auto-generated method stub
+		ArrayList<EcoTourism> listEcoTourism = new ArrayList<EcoTourism>();
+		listEcoTourism = ecoTourismRepository.findByCode(reg_code);
+		
+		return listEcoTourism;
+	}
+	
+	@Override
+	public EcoTourism saveEcoTourism(EcoTourism ecoTourism) throws Exception {
+		boolean result = false;
+		
+		
+		return ecoTourismRepository.save(ecoTourism);
+	}
+	
+	@Override
+	public EcoTourism updateEcoTourism(EcoTourism ecoTourism) throws Exception {
+		boolean result = false;
+		EcoTourism targetEcoTourism = ecoTourismRepository.findByIdxAndCode(ecoTourism.getIdx(), ecoTourism.getCode());
+		targetEcoTourism.setPrgm_name(ecoTourism.getPrgm_name());
+		targetEcoTourism.setCode(ecoTourism.getCode());
+		targetEcoTourism.setTheme(ecoTourism.getTheme());
+		targetEcoTourism.setRegion(ecoTourism.getRegion());
+		targetEcoTourism.setIntroduce(ecoTourism.getIntroduce());
+		targetEcoTourism.setDetail(ecoTourism.getDetail());
+		return ecoTourismRepository.save(targetEcoTourism);
+	}
 
 }

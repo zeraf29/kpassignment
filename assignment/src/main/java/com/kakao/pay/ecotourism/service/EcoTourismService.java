@@ -13,4 +13,5 @@ public interface EcoTourismService {
 	ArrayList<EcoTourism> findByRegCode(String reg_code) throws Exception;
 	EcoTourism saveEcoTourism(EcoTourism ecoTourism) throws Exception;
 	EcoTourism updateEcoTourism(EcoTourism ecoTourism) throws Exception;
+	EcoTourism findByRegionAndThemeOrIntroduceOrDetail(String region, String keyword) throws Exception;
 }

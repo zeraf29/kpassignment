@@ -183,4 +183,19 @@ public class EcoTourismApiController {
 		return ecoTourismService.saveEcoTourism(ecoTourism);
 	}
 	
+	@RequestMapping(value = "/api/recommend/region/keyword/{region}/{keyword}", method = RequestMethod.GET)
+	public @ResponseBody JSONObject getRecommendByRegionAndThemeOrIntroduceOrDetail(@PathVariable("region") String region , @PathVariable("keyword") String keyword) throws Exception{
+		EcoTourism ecoTourismList = ecoTourismService.findByRegionAndThemeOrIntroduceOrDetail(region, keyword);
+		
+		JSONObject obj = new JSONObject();
+		obj.put("program", "prg"+ecoTourismList.getIdx());
+		obj.put("code", ecoTourismList.getCode());
+		obj.put("region", ecoTourismList.getRegion());
+		obj.put("prgm_name", ecoTourismList.getPrgm_name());
+		obj.put("theme", ecoTourismList.getTheme());
+		obj.put("introduce", ecoTourismList.getIntroduce());
+		obj.put("detail", ecoTourismList.getDetail());
+		return obj;
+	}
+	
 }

@@ -71,10 +71,10 @@ public class EcoTourismServiceImpl implements EcoTourismService {
 		
 		int count = 0;
 		Pattern p = Pattern.compile(detail);
-		Matcher m = p.matcher(detail);
 		String dbSpecific = null;
 		for(EcoTourism ecoTourism : listEcoTourism) {
 			dbSpecific = ecoTourism.getDetail();
+			Matcher m = p.matcher(dbSpecific);
 			for(int i=0 ; m.find(i); i=m.end())
 				count++;
 		}
@@ -110,6 +110,41 @@ public class EcoTourismServiceImpl implements EcoTourismService {
 		targetEcoTourism.setIntroduce(ecoTourism.getIntroduce());
 		targetEcoTourism.setDetail(ecoTourism.getDetail());
 		return ecoTourismRepository.save(targetEcoTourism);
+	}
+	
+	@Override
+	public EcoTourism findByRegionAndThemeOrIntroduceOrDetail(String region, String keyword) throws Exception {
+		
+		ArrayList<EcoTourism> listEcoTourism = ecoTourismRepository.findByRegionAndThemeOrIntroduceOrDetail("%"+region+"%", "%"+keyword+"%");
+		
+		int maxCnt = 0;
+		int nowCnt;
+		EcoTourism returnEcoTourism = new EcoTourism();
+		Matcher m = null;
+		Pattern p = Pattern.compile(keyword);
+		String dbSpecific = null;
+		
+		for(EcoTourism ecoTourism : listEcoTourism) {
+			nowCnt = 0;
+			dbSpecific = ecoTourism.getDetail();
+			m = p.matcher(dbSpecific);
+			for(int i=0 ; m.find(i); i=m.end())
+				nowCnt++;
+			dbSpecific = ecoTourism.getIntroduce();
+			m = p.matcher(dbSpecific);
+			for(int i=0 ; m.find(i); i=m.end())
+				nowCnt++;
+			dbSpecific = ecoTourism.getTheme();
+			m = p.matcher(dbSpecific);
+			for(int i=0 ; m.find(i); i=m.end())
+				nowCnt++;
+			if(nowCnt>=maxCnt) {
+				maxCnt = nowCnt;
+				returnEcoTourism = ecoTourism;
+			}
+		}
+		
+		return returnEcoTourism;
 	}
 
 }

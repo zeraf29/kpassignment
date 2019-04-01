@@ -1,11 +1,11 @@
 # kpassignment
 kpassignment
 
-김진협(zeraf29@gmail.com) - 카카오페이 - 과제 
+김진협(zeraf29@gmail.com) 
 
 ========================================
 
-1. 과제유형: 사전과제2(생태 정보 서비스 API 개발)
+1. 생태 정보 서비스 API
 2. 개발 프레임워크 : Spring Boot (Spring Tool Suite 4 사용)
 3. 개발 언어: Java (OpenJdk 11.0.2)
 4. 과제 Github 주소: https://github.com/zeraf29/kpassignment
